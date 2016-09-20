@@ -27,13 +27,14 @@ int main(int argc, char* argv[]) {
 #ifdef __APPLE__
   std::string path = "/tmp";
   google_breakpad::ExceptionHandler eh(path, NULL, dumpCallback, NULL, true, NULL);
+  makeCrash();
 #endif
 
 #ifdef _WIN32
   std::wstring path = L"C:\\tmp";
-  google_breakpad::ExceptionHandler eh(path, 0, dumpCallback, 0, true);
+  google_breakpad::ExceptionHandler eh(path, 0, dumpCallback, 0, google_breakpad::ExceptionHandler::HandlerType::HANDLER_ALL);
+  // Don't crash on Windows because it makes exit code non-zero value
 #endif
 
-  makeCrash();
   return 0;
 }

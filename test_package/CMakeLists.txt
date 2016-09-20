@@ -14,6 +14,7 @@ elseif (MSVC)
   if(NOT BREAKPAD_FOUND)
     message(FATAL_ERROR "Breakpad not found")
   endif ()
+  set(CMAKE_CXX_FLAGS "/wd4091 /wd4577")
 endif ()
 
 add_executable( example example.cpp )

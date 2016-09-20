@@ -1,4 +1,5 @@
 from conans import ConanFile
+import os
 
 class BreakpadConan( ConanFile ):
   name = 'breakpad'
@@ -32,14 +33,15 @@ class BreakpadConan( ConanFile ):
     if self.settings.os == 'Macos':
       self.copy( '*.h', dst='include/client/mac', src='breakpad/src/client/mac' )
       self.copy( 'Breakpad.framework*', dst='lib', src='breakpad/src/client/mac/build/%s' % self.settings.build_type )
-    elif self.settings.os == 'Windows':    
+    elif self.settings.os == 'Windows':
       self.copy( '*.h', dst='include/client/windows', src='breakpad/src/client/windows' )
       self.copy( '*.h', dst='include/google_breakpad', src='breakpad/src/google_breakpad' )
       self.copy( '*.lib', dst='lib', src='breakpad/src/client/windows/%s' % self.settings.build_type, keep_path=False )
       self.copy( '*.lib', dst='lib', src='breakpad/src/client/windows/handler/%s' % self.settings.build_type, keep_path=False )
       self.copy( '*.lib', dst='lib', src='breakpad/src/client/windows/crash_generation/%s' % self.settings.build_type, keep_path=False )
       self.copy( '*.lib', dst='lib', src='breakpad/src/client/windows/sender/%s' % self.settings.build_type, keep_path=False )
-      self.copy( '*.exe', dst='bin', src='breakpad/src/tools/windows' )
+      self.copy( '*.exe', dst='bin', src='breakpad/src/tools/windows/binaries' )
 
   def package_info( self ):
     self.cpp_info.libs = ['breakpad']
+    self.env_info.path.append(os.path.join(self.package_folder, "bin"))

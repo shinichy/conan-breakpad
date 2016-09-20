@@ -18,7 +18,7 @@ class BreakpadConan( ConanFile ):
       self.run( 'xcodebuild -project breakpad/src/client/mac/Breakpad.xcodeproj -sdk macosx -target Breakpad ARCHS=x86_64 ONLY_ACTIVE_ARCH=YES -configuration %s' % self.settings.build_type )
     elif self.settings.os == 'Windows':
       self.run( 'cd breakpad & C:\\msys64\\usr\\bin\\patch -p1 --binary -N < ..\\patch\\common.gypi.patch' )
-      self.run( 'gyp --no-circular-check -G msvs_version=2015 -D win_release_RuntimeLibrary=2 -D win_debug_RuntimeLibrary=3 breakpad/src/client/windows/breakpad_client.gyp' )
+      self.run( 'gyp --no-circular-check -D win_release_RuntimeLibrary=2 -D win_debug_RuntimeLibrary=3 breakpad/src/client/windows/breakpad_client.gyp' )
       self.run( 'MSBuild.exe /p:Configuration=%s /p:VisualStudioVersion=%s breakpad/src/client/windows/common.vcxproj' % ( self.settings.build_type, self.settings.compiler.version ) )
       self.run( 'MSBuild.exe /p:Configuration=%s /p:VisualStudioVersion=%s /p:DisableSpecificWarnings="4091;2220" breakpad/src/client/windows/handler/exception_handler.vcxproj' % ( self.settings.build_type, self.settings.compiler.version ) )
       self.run( 'MSBuild.exe /p:Configuration=%s /p:VisualStudioVersion=%s breakpad/src/client/windows/crash_generation/crash_generation_client.vcxproj' % ( self.settings.build_type, self.settings.compiler.version ))

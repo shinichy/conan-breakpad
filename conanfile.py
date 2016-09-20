@@ -39,6 +39,7 @@ class BreakpadConan( ConanFile ):
       self.copy( '*.lib', dst='lib', src='breakpad/src/client/windows/handler/%s' % self.settings.build_type, keep_path=False )
       self.copy( '*.lib', dst='lib', src='breakpad/src/client/windows/crash_generation/%s' % self.settings.build_type, keep_path=False )
       self.copy( '*.lib', dst='lib', src='breakpad/src/client/windows/sender/%s' % self.settings.build_type, keep_path=False )
+      self.copy( '*.exe', dst='bin', src='breakpad/src/tools/windows' )
 
   def package_info( self ):
     self.cpp_info.libs = ['breakpad']

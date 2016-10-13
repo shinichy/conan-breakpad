@@ -5,7 +5,7 @@ class BreakpadConan( ConanFile ):
   name = 'breakpad'
   version = '1.0.0'
   license = 'https://chromium.googlesource.com/breakpad/breakpad/+/master/LICENSE'
-  url = 'https://github.com/silkedit/conan-breakpad'
+  url = 'https://github.com/shinichy/conan-breakpad'
   settings = 'os', 'compiler', 'build_type', 'arch'
   generators = 'cmake'
   branch = 'chrome_53'

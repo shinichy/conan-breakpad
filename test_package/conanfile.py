@@ -1,7 +1,7 @@
 from conans import ConanFile, CMake
 import os
 
-username = os.getenv( '"CONAN_USERNAME', 'silkedit' )
+username = os.getenv( '"CONAN_USERNAME', 'shinichy' )
 channel = os.getenv( 'CONAN_CHANNEL', 'testing' )
 
 class TestConan( ConanFile ):

@@ -21,19 +21,15 @@ bool dumpCallback(const wchar_t* _dump_dir,
 }
 #endif
 
-void makeCrash() { volatile int* a = (int*)(NULL); *a = 1; }
-
 int main(int argc, char* argv[]) {
 #ifdef __APPLE__
   std::string path = "/tmp";
   google_breakpad::ExceptionHandler eh(path, NULL, dumpCallback, NULL, true, NULL);
-  makeCrash();
 #endif
 
 #ifdef _WIN32
   std::wstring path = L"C:\\tmp";
   google_breakpad::ExceptionHandler eh(path, 0, dumpCallback, 0, google_breakpad::ExceptionHandler::HandlerType::HANDLER_ALL);
-  // Don't crash on Windows because it makes exit code non-zero value
 #endif
 
   return 0;

@@ -1,5 +1,5 @@
 from conans import ConanFile
-import os
+import os, shutil
 
 class BreakpadConan( ConanFile ):
   name = 'breakpad'
@@ -33,7 +33,8 @@ class BreakpadConan( ConanFile ):
 
     if self.settings.os == 'Macos':
       self.copy( '*.h', dst='include/client/mac', src='breakpad/src/client/mac' )
-      self.copy( 'Breakpad.framework*', dst='lib', src='breakpad/src/client/mac/build/%s' % self.settings.build_type )
+      # self.copy doesn't preserve symbolic links
+      shutil.copytree('breakpad/src/client/mac/build/%s/Breakpad.framework' % self.settings.build_type, os.path.join(self.package_folder, 'lib', 'Breakpad.framework'), symlinks=True)
     elif self.settings.os == 'Windows':
       self.copy( '*.h', dst='include/client/windows', src='breakpad/src/client/windows' )
       self.copy( '*.h', dst='include/google_breakpad', src='breakpad/src/google_breakpad' )

@@ -50,10 +50,14 @@ class BreakpadConan( ConanFile ):
       self.copy( '*.lib', dst='lib', src='breakpad/src/client/windows/sender/%s' % self.settings.build_type, keep_path=False )
       self.copy( '*.exe', dst='bin', src='breakpad/src/tools/windows/binaries' )
     elif self.settings.os == 'Linux':
-      self.copy("*.h", dst="include", src="breakpad/src/client/linux")
-      self.copy("*.so*", dst="lib", src="breakpad/src/client/binaries")
-      self.copy("*.a", dst="lib", src="breakpad/src/client/binaries")
+      self.copy("*.h", dst="include/client/linux", src="breakpad/src/client/linux")
+      self.copy("*.h", dst="include/google_breakpad/", src="breakpad/src/google_breakpad")
+      self.copy("*.h", dst="include/third_party/", src="breakpad/src/third_party")
+      self.copy("*.a", dst="lib", src="src/client/linux")
 
   def package_info( self ):
-    self.cpp_info.libs = ['breakpad']
+    if self.settings.os == 'Linux':
+      self.cpp_info.libs = ['breakpad_client']
+    else:
+      self.cpp_info.libs = ['breakpad']
     self.env_info.path.append(os.path.join(self.package_folder, "bin"))

@@ -1,4 +1,4 @@
-from conans import ConanFile
+from conans import ConanFile, AutoToolsBuildEnvironment
 import os, shutil
 
 class BreakpadConan( ConanFile ):
@@ -13,6 +13,8 @@ class BreakpadConan( ConanFile ):
 
   def source( self ):
     self.run('git clone https://chromium.googlesource.com/breakpad/breakpad --branch %s --depth 1' % self.branch)
+    if self.settings.os == 'Linux':
+      self.run('git clone https://chromium.googlesource.com/linux-syscall-support breakpad/src/third_party/lss')
 
   def build( self ):
     if self.settings.os == 'Macos':
@@ -26,6 +28,10 @@ class BreakpadConan( ConanFile ):
       self.run( 'MSBuild.exe /p:Configuration=%s /p:VisualStudioVersion=%s breakpad/src/client/windows/crash_generation/crash_generation_client.vcxproj' % ( self.settings.build_type, self.settings.compiler.version ))
       self.run( 'MSBuild.exe /p:Configuration=%s /p:VisualStudioVersion=%s breakpad/src/client/windows/crash_generation/crash_generation_server.vcxproj' % ( self.settings.build_type, self.settings.compiler.version ))
       self.run( 'MSBuild.exe /p:Configuration=%s /p:VisualStudioVersion=%s breakpad/src/client/windows/sender/crash_report_sender.vcxproj' % ( self.settings.build_type, self.settings.compiler.version ))
+    elif self.settings.os == 'Linux':
+      env_build = AutoToolsBuildEnvironment(self)
+      env_build.configure('breakpad/')
+      env_build.make()
 
   def package( self ):
     self.copy("FindBREAKPAD.cmake", ".", ".")
@@ -43,6 +49,10 @@ class BreakpadConan( ConanFile ):
       self.copy( '*.lib', dst='lib', src='breakpad/src/client/windows/crash_generation/%s' % self.settings.build_type, keep_path=False )
       self.copy( '*.lib', dst='lib', src='breakpad/src/client/windows/sender/%s' % self.settings.build_type, keep_path=False )
       self.copy( '*.exe', dst='bin', src='breakpad/src/tools/windows/binaries' )
+    elif self.settings.os == 'Linux':
+      self.copy("*.h", dst="include", src="breakpad/src/client/linux")
+      self.copy("*.so*", dst="lib", src="breakpad/src/client/binaries")
+      self.copy("*.a", dst="lib", src="breakpad/src/client/binaries")
 
   def package_info( self ):
     self.cpp_info.libs = ['breakpad']

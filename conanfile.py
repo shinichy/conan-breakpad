@@ -8,7 +8,7 @@ class BreakpadConan( ConanFile ):
   url = 'https://github.com/shinichy/conan-breakpad'
   settings = 'os', 'compiler', 'build_type', 'arch'
   generators = 'cmake'
-  branch = 'chrome_53'
+  branch = 'chrome_58'
   exports = ["FindBREAKPAD.cmake", "patch/*"]
 
   def source( self ):

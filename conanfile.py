@@ -54,6 +54,11 @@ class BreakpadConan( ConanFile ):
       self.copy("*.h", dst="include/google_breakpad/", src="breakpad/src/google_breakpad")
       self.copy("*.h", dst="include/third_party/", src="breakpad/src/third_party")
       self.copy("*.a", dst="lib", src="src/client/linux")
+      self.copy("microdump_stackwalk", dst="bin", src="src/processor/")
+      self.copy("minidump_dump", dst="bin", src="src/processor/")
+      self.copy("minidump_stackwalk", dst="bin", src="src/processor/")
+
+
 
   def package_info( self ):
     self.cpp_info.libs = ['breakpad']

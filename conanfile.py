@@ -56,8 +56,5 @@ class BreakpadConan( ConanFile ):
       self.copy("*.a", dst="lib", src="src/client/linux")
 
   def package_info( self ):
-    if self.settings.os == 'Linux':
-      self.cpp_info.libs = ['breakpad_client']
-    else:
-      self.cpp_info.libs = ['breakpad']
+    self.cpp_info.libs = ['breakpad']
     self.env_info.path.append(os.path.join(self.package_folder, "bin"))

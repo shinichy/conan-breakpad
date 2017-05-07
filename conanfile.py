@@ -57,7 +57,11 @@ class BreakpadConan( ConanFile ):
       self.copy("microdump_stackwalk", dst="bin", src="src/processor/")
       self.copy("minidump_dump", dst="bin", src="src/processor/")
       self.copy("minidump_stackwalk", dst="bin", src="src/processor/")
-
+      self.copy("dump_syms", dst="bin", src="src/tools/linux/dump_syms/")
+      self.copy("core2md", dst="bin", src="src/tools/linux/core2md/")
+      self.copy("minidump-2-core", dst="bin", src="src/tools/linux/md2core/")
+      self.copy("minidump_upload", dst="bin", src="src/tools/linux/symupload/")
+      self.copy("sym_upload", dst="bin", src="src/tools/linux/symupload/")
 
 
   def package_info( self ):

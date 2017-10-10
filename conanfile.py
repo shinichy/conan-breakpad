@@ -1,4 +1,4 @@
-from conans import ConanFile
+from conans import ConanFile, AutoToolsBuildEnvironment
 import os, shutil
 
 class BreakpadConan( ConanFile ):
@@ -8,11 +8,13 @@ class BreakpadConan( ConanFile ):
   url = 'https://github.com/shinichy/conan-breakpad'
   settings = 'os', 'compiler', 'build_type', 'arch'
   generators = 'cmake'
-  branch = 'chrome_53'
+  branch = 'chrome_58'
   exports = ["FindBREAKPAD.cmake", "patch/*"]
 
   def source( self ):
     self.run('git clone https://chromium.googlesource.com/breakpad/breakpad --branch %s --depth 1' % self.branch)
+    if self.settings.os == 'Linux':
+      self.run('git clone https://chromium.googlesource.com/linux-syscall-support breakpad/src/third_party/lss')
 
   def build( self ):
     if self.settings.os == 'Macos':
@@ -26,6 +28,10 @@ class BreakpadConan( ConanFile ):
       self.run( 'MSBuild.exe /p:Configuration=%s /p:VisualStudioVersion=%s breakpad/src/client/windows/crash_generation/crash_generation_client.vcxproj' % ( self.settings.build_type, self.settings.compiler.version ))
       self.run( 'MSBuild.exe /p:Configuration=%s /p:VisualStudioVersion=%s breakpad/src/client/windows/crash_generation/crash_generation_server.vcxproj' % ( self.settings.build_type, self.settings.compiler.version ))
       self.run( 'MSBuild.exe /p:Configuration=%s /p:VisualStudioVersion=%s breakpad/src/client/windows/sender/crash_report_sender.vcxproj' % ( self.settings.build_type, self.settings.compiler.version ))
+    elif self.settings.os == 'Linux':
+      env_build = AutoToolsBuildEnvironment(self)
+      env_build.configure('breakpad/')
+      env_build.make()
 
   def package( self ):
     self.copy("FindBREAKPAD.cmake", ".", ".")
@@ -43,7 +49,22 @@ class BreakpadConan( ConanFile ):
       self.copy( '*.lib', dst='lib', src='breakpad/src/client/windows/crash_generation/%s' % self.settings.build_type, keep_path=False )
       self.copy( '*.lib', dst='lib', src='breakpad/src/client/windows/sender/%s' % self.settings.build_type, keep_path=False )
       self.copy( '*.exe', dst='bin', src='breakpad/src/tools/windows/binaries' )
+    elif self.settings.os == 'Linux':
+      self.copy("*.h", dst="include/client/linux", src="breakpad/src/client/linux")
+      self.copy("*.h", dst="include/google_breakpad/", src="breakpad/src/google_breakpad")
+      self.copy("*.h", dst="include/third_party/", src="breakpad/src/third_party")
+      self.copy("*.a", dst="lib", src="src/client/linux")
+      self.copy("microdump_stackwalk", dst="bin", src="src/processor/")
+      self.copy("minidump_dump", dst="bin", src="src/processor/")
+      self.copy("minidump_stackwalk", dst="bin", src="src/processor/")
+      self.copy("dump_syms", dst="bin", src="src/tools/linux/dump_syms/")
+      self.copy("core2md", dst="bin", src="src/tools/linux/core2md/")
+      self.copy("minidump-2-core", dst="bin", src="src/tools/linux/md2core/")
+      self.copy("minidump_upload", dst="bin", src="src/tools/linux/symupload/")
+      self.copy("sym_upload", dst="bin", src="src/tools/linux/symupload/")
+
 
   def package_info( self ):
-    self.cpp_info.libs = ['breakpad']
+    if self.settings.os == 'Windows':
+      self.cpp_info.libs = ['breakpad']
     self.env_info.path.append(os.path.join(self.package_folder, "bin"))
